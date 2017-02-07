@@ -23,6 +23,4 @@ Sometimes, the saddest data lends itself to the most in-depth analysis. This is 
 ## Analysis
 
 ### Pretty Map
-{% raw %}
 <iframe src = "reported_crime.html" height = "400px" width = "100%" align = 'bottom'></iframe>
-{% endraw %}
