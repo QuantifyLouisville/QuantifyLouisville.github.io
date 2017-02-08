@@ -23,7 +23,7 @@ description: Analyzing Louisville, one dataset at a time
 
 # List of links in the navigation bar
 navbar-links:
-  About Me: "about-this"
+  About This: "about-this"
   Resources:
     - Beautiful Jekyll: "http://deanattali.com/beautiful-jekyll/"
     - Learn markdown: "http://www.markdowntutorial.com/"
