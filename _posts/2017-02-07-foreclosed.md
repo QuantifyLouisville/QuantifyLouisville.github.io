@@ -23,4 +23,4 @@ Sometimes, the saddest data lends itself to the most in-depth analysis. This is 
 ## Analysis
 
 ### Pretty Map
-<iframe width="100%" height="400px" src="http://ehbick01.github.io/foreclosures.html" frameborder="no" allowfullscreen="allowfullscreen"></iframe>
+<iframe width="300px" height="400px" src="http://ehbick01.github.io/foreclosures.html" frameborder="no" allowfullscreen="allowfullscreen"> </iframe>
