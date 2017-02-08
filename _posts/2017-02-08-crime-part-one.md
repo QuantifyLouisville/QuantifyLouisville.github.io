@@ -44,4 +44,4 @@ Perhaps the most baffling the records include the 32 times in the last ten years
 
 At the other extreme, some crimes appear to have been reported before they even occurred. These Minority-Report crimes, in theory, should be fairly easy to prevent.
 
-![](/images/crime-part-one/Minority%20Report%20Graph-1.png)  
+![](../images/Minority%20Report%20Graph-1.png)  
