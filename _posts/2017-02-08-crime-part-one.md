@@ -36,7 +36,7 @@ For our initial exploration of this data set, we tackled crimes reports from the
 </h4>
 One of the first steps to reviewing a new data set is to try to tease out outliers. Doing so can highlight weaknesses in how the data was captured. For example, one easy way that tends to yield silly results is to create comparisons between dates in the set and intepret the outliers literally. In this particular data set, both the date a crime occured and the time it was reported are captured.
 
-Some crimes appear to be reported days, weeks, and sometimes even *years* after they occurred. The visual below tallies any crime from ten years that was reported at least one year after it allegedly perpetrated. ![](/images/crime-part-one/Older%20than%20a%20year%20graph-1.png)
+Some crimes appear to be reported days, weeks, and sometimes even *years* after they occurred. The visual below tallies any crime from ten years that was reported at least one year after it allegedly perpetrated. ![](../images/Older%20than%20a%20year%20graph-1.png)
 
 Understandably, sexual assults and identity thefts make up a large portion of the crimes with a long lag between their occurence and report. However, someone also waited over 12 years to report a stolen firearm and a burglary on 24th Street wasn't reported for over a decade ("Should I call the cops? Does that *really* qualify as a burglary? Maybe I should sleep on it for one more night and see how I feel in the morning.").
 
