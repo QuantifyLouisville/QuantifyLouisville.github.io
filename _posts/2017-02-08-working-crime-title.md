@@ -69,7 +69,48 @@ should be fairly easy to prevent.
 
 The extremes at both ends of the occured and reported dates make it
 difficult to the dates relative to each other to answer questions other
-than in the most broad sense.
+than in the most broad sense. To cut through that a bit, let's take a
+look at the five most active days from the sense of crime. We can then
+compare those totals to a day that would be made up of the average total
+crime numbers for each crime type - we're calling this the "Average
+Day", although we fully realize that looking at the average of 16
+different types of crime doesn't *fully* reflect an average day of total
+crime.
+
+The most obvious bit of insight here is how much larger our bars are in
+the top five as compared to the average. The top five days have activity
+levels near 700 charges a day - whereas our average is sitting around
+200 for the day. This nearly 4-fold increase above the average is
+certainly significant in magnitude, but are these days truly significant
+in the makeup of the crime? In other words, are they driven
+significantly higher because of the presence of a single type of crime -
+or is the composition largely the same, with just more activity across
+the board?
+
+![](../images/posts/plot-top-five-total-1.png)
+
+To help answer that, we can break down the composition of the type of
+crime across the top five most active days and the average. And when we
+do that, a couple of interesting points pop out For one - there are a
+couple of call outs. Sex crimes were up significantly above the average
+on Jan 2n, 2012 according to the data. Also, there were a whole lot more
+charges for disturbing the peace on March 17th of the same year, and a
+slew of crimes labeled simply as 'other' on September 17th.
+
+What's most interesting, perhaps, is that there isn't anything
+particularly special about the top five days as compared to the average.
+The composition of crime on those days is largely consistent with the
+average - which means that there was no single reason why these dates
+stood out from the rest. The makeup of crime on those days was
+essentially the same - there was just more of each.
+
+![](../images/posts/top-five-composition.png)
+
+The next question to ask is: Is this composition holding true on these
+days across the entire region? Or are we seeing one division
+disproportionately affected by increased activity in one type of crime
+that it typically never witnesses, and therefore driving the overall
+totals higher?
 
 When viewing the number of reported crimes occuring per month, there is
 a noticable uptick in homicides and weapons complaints per month over
