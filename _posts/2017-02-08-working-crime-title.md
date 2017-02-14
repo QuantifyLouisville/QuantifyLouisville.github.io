@@ -65,7 +65,7 @@ At the other extreme, some crimes appear to have been reported before
 they even occurred. These Minority-Report crimes, one would think,
 should be fairly easy to prevent.
 
-![](../images/posts/Minority%20Report%20Graph-1.png)
+![](../images/posts/Minority%20ReportGraph-1.png)
 
 The extremes at both ends of the occured and reported dates make it
 difficult to the dates relative to each other to answer questions other
@@ -87,7 +87,7 @@ significantly higher because of the presence of a single type of crime -
 or is the composition largely the same, with just more activity across
 the board?
 
-![](../images/posts/plot-top-five-total-1.png)
+![](../images/posts/top-five-total.png)
 
 To help answer that, we can break down the composition of the type of
 crime across the top five most active days and the average. And when we
