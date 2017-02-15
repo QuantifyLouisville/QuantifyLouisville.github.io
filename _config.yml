@@ -25,9 +25,9 @@ description: Analyzing Louisville, one dataset at a time
 navbar-links:
   About This: "about-this"
   Resources:
-    - Beautiful Jekyll: "http://deanattali.com/beautiful-jekyll/"
-    - Learn markdown: "http://www.markdowntutorial.com/"
-    - GitHub Pages: "https://pages.github.com/"
+    - Louisville Data Portal: "https://data.louisvilleky.gov/"
+    - Learn About R: "http://r4ds.had.co.nz/"
+    - Checkout Our Github: "https://github.com/quantifylouisville"
   # Author's home: "http://deanattali.com"
 
 # Image to show in the navigation bar - image must be a square (width = height)
@@ -45,10 +45,8 @@ avatar: "/img/avatar-icon.png"
 author:
   name: QuantifyLouisville
   email: "quantifylouisville@gmail.com"
-  github: yourname    # eg. daattali
-  twitter: yourname   # eg. daattali
-  reddit: yourname    # eg. daattali
-  google-plus: +yourname   # eg. +DeanAttali or 109424658772469020925
+  github: QuantifyLouisville    # eg. daattali
+  twitter: QuantifyLou   # eg. daattali
 
 # Select which links to show in the footer
 footer-links-active:
@@ -77,7 +75,7 @@ share-links-active:
 
 # How to display the link to the website in the footer
 # Remove this if you don't want a link in the footer
-url-pretty: "MyWebsite.com"  # eg. "deanattali.com/beautiful-jekyll"
+url-pretty: "QuantifyLouisville.com"  # eg. "deanattali.com/beautiful-jekyll"
 
 # --- Misc --- #
 # Fill in your Disqus shortname (NOT the userid) if you want to support Disqus comments
