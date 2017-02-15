@@ -213,5 +213,6 @@ increase in both reports of weapons-related crime and homicdies.
 As always, please don't hesitate to contact us with comments and
 questions.
 
-[Michael Weis](mailto:michaelweis@gmail.com) 
-[Eric Bickel](mailto:bickel.eric@gmail.com)
+[**Michael Weis**](mailto:michaelweis@gmail.com)
+<br>
+[**Eric Bickel**](mailto:bickel.eric@gmail.com)
