@@ -34,7 +34,7 @@ totals well above the rest of the data set. It is possible reports in
 2012 were collected differently than in other years, or a system issue
 is creating false spikes.
 
-![](../posts/images/Crime%20Types%20By%20Day%20Graph-1.png)
+![](../images/posts/Crime%20Types%20By%20Day%20Graph-1.png)
 
 Assuming that the first-glance data issues described above don't
 completely remove the data's usefulness, it appears that the rise in
@@ -46,9 +46,9 @@ Based upon only these data series, it appears that an increase in the
 number of weapons crimes reported corresponds to a similary-time
 increase in the number of homicides that occur.
 
-![](../posts/images/Homicides%20and%20Weapons-1.png)
+![](../images/posts/Homicides%20and%20Weapons-1.png)
 
-![](../posts/images/Homicides%20and%20Weapons%20by%20Division-1.png)
+![](../images/posts/Homicides%20and%20Weapons%20by%20Division-1.png)
 
 Based upon the graph above, it looks like the weapons occurence reports
 for the 2nd Division (a division which includes the neighborhoods
@@ -59,7 +59,7 @@ correlation is to assume that more weapons-related reports imply an
 increase in the number of weapons present in those neighborhoods, which
 leads to a high number of homicides.
 
-![](../posts/images/Homicides%20and%20Weapons%202nd%20Division-1.png)
+![](../images/posts/Homicides%20and%20Weapons%202nd%20Division-1.png)
 
 We can visualize this more by mapping the divisions and shading each
 based on how strong the relationship is between weapons charges and
@@ -71,7 +71,7 @@ Looking at it this way, we can easily see that the largest relationship
 significantly different than most other divisions with the exception of
 the Fourth Division, which is right next to the Second.
 
-![](../posts/images/mapping-1.png)
+![](../images/posts/mapping-1.png)
 
 This is in no way a claim that there is a causal relationship between
 the two. However, it is definitely interesting that in certain
@@ -118,7 +118,7 @@ Some crimes appear to be reported days, weeks, and sometimes even
 years that was reported at least one year after it allegedly
 perpetrated.
 
-![](../posts/images/Older%20than%20a%20year%20graph-1.png)
+![](../images/posts/Older%20than%20a%20year%20graph-1.png)
 
 Understandably, sexual assults and identity thefts make up a large
 portion of the crimes with a long lag between their occurence and
@@ -139,7 +139,7 @@ At the other extreme, some crimes appear to have been reported before
 they even occurred. These Minority-Report crimes, one would think,
 should be fairly easy to prevent.
 
-![](../posts/images/Minority%20Report%20Graph-1.png)
+![](../images/posts/Minority%20ReportGraph-1.png)
 
 The extremes at both ends of the occured and reported dates make it
 difficult to the dates relative to each other to answer questions other
@@ -161,13 +161,13 @@ significantly higher because of the presence of a single type of crime -
 or is the composition largely the same, with just more activity across
 the board?
 
-![](../posts/images/plot-top-five-total-1.png)
+![](../images/posts/top-five-total.png)
 
 To help answer that, we can break down the composition of the type of
 crime across the top five most active days and the average. And when we
 do that, a couple of interesting points pop out For one - there are a
 couple of call outs. Sex crimes were up significantly above the average
-on Jan 2n, 2012 according to the data. Also, there were a whole lot more
+on Jan 2nd, 2012 according to the data. Also, there were a whole lot more
 charges for disturbing the peace on March 17th of the same year, and a
 slew of crimes labeled simply as 'other' on September 17th.
 
@@ -178,7 +178,7 @@ average - which means that there was no single reason why these dates
 stood out from the rest. The makeup of crime on those days was
 essentially the same - there was just more of each.
 
-![](../posts/images/top-five-composition.png)
+![](../images/posts/top-five-composition.png)
 
 The next question to ask is: Is this composition holding true on these
 days across the entire region? Or are we seeing one division
@@ -186,7 +186,7 @@ disproportionately affected by increased activity in one type of crime
 that it typically never witnesses, and therefore driving the overall
 totals higher?
 
-![](../posts/images/top-five-total-Divisions.png)
+![](../images/posts/top-five-total-Divisions.png)
 
 Within different divisions, Metro Louisville reports made a much larger
 proportion of the crime reports on 1-1-2012 than would be typical, or as
@@ -197,7 +197,7 @@ Paristown, Schnitzelburg, Shelby Park, Smoketown Jackson, South
 Louisville, Taylor Berry, University, Wilder Park and Wyandotte) tends
 to contribute the most reports on a typical day.
 
-![](../posts/images/top-five-composition-divisions.png)
+![](../images/posts/top-five-composition-divisions.png)
 
 So, what can we make of these high-volume days? As with other sections
 of this data, it is possible that how the data is collected makes it
