@@ -1,0 +1,844 @@
+---
+title: "Louisville Gun Fashion"
+author: "QL"
+date: 2018-05-10T21:13:14-05:00
+image: "img/firearms/change.png"
+categories: ["Crime"]
+tags: ["firearms", "louisville", "trends"]
+---
+
+As could be expected, it is very difficult to get market research on the hottest trends in gun ownership. However, the Louisville Open Data Portal's Firearm Intake dataset just might give us a peek into which brands and styles are taking over the Louisville gun scene. 
+
+Of course, which brand of gun someone is partial to is likely influenced by their demographics. A young teenager likely doesn't want to be seen with the same firearm as their unhip dad. And as with many accessories, a lady's taste in weaponry may different than that of her fella (or other lady). Matching the piece to the crime adds a whole other level of complexity. And other than using a passe gun brand in a crime ironically, no one wants to be caught with last decade's hardware! 
+
+With that being said, QL is here to help walk you through the do's and don'ts of Louisville Gun Fashion. 
+
+
+## Hottest Guns for Louisville Teens! 
+Teens are hard to understand. They use purposely inscrutable language and their music is incomprehensible. Many times they can seem to define themselves as an explicit contrast to the older generations. Their taste in weaponry is no different. 
+
+For instance, is it any surprise that, relative to its adult ranking.  the most teen gun brand of all has both "Die" AND "Metal" in the name?!  
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(lubridate)
+library(leaflet)
+library(tidycensus)
+library(leaflet)
+library(stringr)
+library(sf)
+library(forecast)
+library(tidyquant)
+library(timetk)
+library(sweep)
+library(formattable)
+library(kableExtra)
+library(knitr)
+library(ggiraph)
+
+
+
+Firearms_raw <-
+  read_csv(
+    "https://data.louisvilleky.gov/sites/default/files/Firearm%20Data_normalized_addresses.csv"
+  ) %>%
+  filter(!duplicated(INCIDENT_NUMBER))
+
+
+# turn off scientific notation that no one ever wants
+options(scipen = 999)
+
+# Fix the names
+Firearms <-
+  Firearms_raw %>%
+  
+  mutate(FIREARM_MANUFACTURER_lowercase = tolower(FIREARM_MANUFACTURER)) %>%
+  
+  # most of the names appear to be manually entered
+  # in order to make group possible, similar names need to be changed
+  mutate(
+    ManufacturerName = case_when(
+      # fix all the names here ---------------------------------------------------
+      grepl("anderson", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Anderson",
+      grepl("eagle", FIREARM_MANUFACTURER_lowercase) == TRUE |
+        grepl("bersa", FIREARM_MANUFACTURER_lowercase) == TRUE |
+        grepl("bersa", FIREARM_MODEL) == TRUE ~ "Eagle",
+      grepl("glock", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Glock",
+      grepl("browning", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Browning",
+      grepl("winche", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Winchester",
+      grepl("taurus", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Taurus",
+      grepl("beretta", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Beretta",
+      grepl("browning", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Browning",
+      grepl("remington", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Remington",
+      grepl("rossi", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Rossi",
+      grepl("cobra", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Cobra",
+      grepl("high", FIREARM_MANUFACTURER_lowercase) == TRUE  |
+        grepl("point", FIREARM_MANUFACTURER_lowercase) == TRUE  ~ "High Standard",
+      grepl("marlin", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Marlin Firearms",
+      grepl("bush", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Bush Master",
+      grepl("harring", FIREARM_MANUFACTURER_lowercase) == TRUE |
+        grepl("new eng", FIREARM_MANUFACTURER_lowercase) == TRUE  ~ "Harrington & Richardson",
+      grepl("moss", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "O. F. Mossberg & Sons",
+      grepl("davis", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Davis Industries",
+      grepl("lorcin", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Lorcin Engineer",
+      grepl("steven", FIREARM_MANUFACTURER_lowercase) == TRUE |
+        grepl("springfield", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Stevens/j. Stevens Arms Co.",
+      grepl("bry", FIREARM_MANUFACTURER_lowercase) == TRUE  &
+        grepl("lucz", FIREARM_MANUFACTURER_lowercase) == FALSE ~ "Bryco Arms",
+      grepl("jennings", FIREARM_MANUFACTURER_lowercase) == TRUE  |
+        grepl("jimenez", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Bryco Arms",
+      grepl("charter", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Charter Arms",
+      grepl("jenn", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Jennings Firearms",
+      grepl("keltec", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Keltec",
+      grepl("sig", FIREARM_MANUFACTURER_lowercase) == TRUE |
+        grepl("sauer", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Sig Sauer",
+      grepl("wesson", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Smith & Wesson",
+      grepl("ster", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Sterling Arms",
+      grepl("johnson", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Iver Johnson",
+      grepl("mav", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Maverick Arms",
+      grepl("titan", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Titan Mfg. Corp.",
+      grepl("norinco", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Norinco",
+      grepl("henry", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Henry Repeating Rifle Co",
+      grepl("century", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Century Arms International",
+      grepl("llama", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Llama Firearms",
+      grepl("essex", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Essex Arms Company",
+      grepl("ceska", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Ceska Zbrojovka",
+      grepl("sedco", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Sedco Industries",
+      grepl("armsco", FIREARM_MANUFACTURER_lowercase) == TRUE  |
+        grepl("rock island", FIREARM_MANUFACTURER_lowercase) == TRUE  ~ "Armscor International",
+      grepl("firearms intern", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Firearms International Inc",
+      grepl("dpms", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "DPMS",
+      grepl("interamrs", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "International Armament Corporation",
+      grepl("connec", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Connecticut Valley Arms",
+      grepl("american ta", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "American Tactical Imports",
+      grepl("arse", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Arsenal Inc.",
+      grepl("armi ", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Armi Tecniche De Emilio Rizzini",
+      grepl("astra", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Astra Unceta Y Cia",
+      grepl("heri", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Heritage Mfg Inc",
+      grepl("arcad", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Arcadia Machine & Tool",
+      grepl("derr", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Derringer Corp.",
+      grepl("bene", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Benelli",
+      grepl("sund", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Sundance",
+      grepl("cross", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Crossman Arms",
+      grepl("diam", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Diamond Arms Co.",
+      grepl("knight", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Knight Rifle",
+      grepl("german", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "German Sports Guns",
+      grepl("kel", FIREARM_MANUFACTURER_lowercase) == TRUE  &
+        grepl("tec", FIREARM_MANUFACTURER_lowercase) == TRUE  ~ "Keltec",
+      grepl("sky", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Skyy Industries",
+      grepl("north", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "North American Arms",
+      is.na(FIREARM_MANUFACTURER_lowercase) == TRUE |
+        grepl("unk", FIREARM_MANUFACTURER_lowercase) == TRUE  |
+        grepl("null", FIREARM_MANUFACTURER_lowercase) == TRUE  ~ "Unknown Manufacturer",
+      grepl("phoe", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Phoenix Arms Co.",
+      grepl("clerk", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Clerke",
+      grepl("universal", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Universal Firearms Corp.",
+      grepl("trad", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Traditions, Inc",
+      grepl("american arms", FIREARM_MANUFACTURER_lowercase) == TRUE |
+        grepl("firear", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "North American Arms",
+      grepl("omega d", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Omega Defensive Industries",
+      grepl("omega a", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Omega Arms",
+      grepl("thomps", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Thompson Center Arms",
+      grepl("tanf", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Tanfoglio",
+      grepl("double", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Double Star Corp",
+      grepl("crit", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Criterion Die and Metal",
+      grepl("garate", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Garate, Anitua Y Cia",
+      grepl("hopkins", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Hopkins & Allen",
+      grepl("aa ", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Aa Arms Corp",
+      grepl("maa", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Maadi Company",
+      grepl("bersa", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Bersa",
+      grepl("industria", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Industria National De Armes",
+      grepl("itha", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Ithaca Guns Usa",
+      grepl("tisas", FIREARM_MANUFACTURER_lowercase) == TRUE ~ "Tisas Trabzon Silah Sanayi",
+      TRUE ~  "Small Manufacturer" #FIREARM_MANUFACTURER
+    )
+  )
+
+# this is designed to create a dataframe that keeps a count of records for each
+# manufacturer and the percent of total for that manufacturer
+# the purpose of this df is to aid in creating the aggregate manufacturer names
+ManufacturerNames <-
+  Firearms %>%
+  group_by(ManufacturerName) %>%
+  summarise(CountOfRecords = n(),
+            PercentOfRecords = CountOfRecords / nrow(Firearms_raw)) %>%
+  mutate(ManufacturerName = ifelse(
+    PercentOfRecords < 0.005,
+    "Small Manufacturer",
+    ManufacturerName
+    
+  )) %>%
+  group_by(ManufacturerName) %>%
+  summarise(CountOfRecords = n(),
+            PercentOfRecords = CountOfRecords / nrow(Firearms_raw))
+
+
+
+ByGender <-
+  Firearms %>%
+  rename(Gender = PERSON_RECOVERED_FROM_SEX) %>%
+  filter(
+    grepl("Unknown",
+          ManufacturerName) == FALSE &
+      grepl("Small",
+            ManufacturerName) == FALSE
+  ) %>%
+  filter(Gender != "NULL" &
+           Gender != "U" &
+           is.na(Gender) == FALSE) %>%
+  group_by(Gender) %>%
+  mutate(TotalRecords = n()) %>%
+  group_by(Gender,
+           ManufacturerName) %>%
+  summarise(GunManufacturerByGender = n() / max(TotalRecords)) %>%
+  spread(Gender,
+         GunManufacturerByGender) %>%
+  mutate(F = ifelse(is.na(F) == TRUE,
+                    0,
+                    F),
+         M = ifelse(is.na(M) == TRUE,
+                    0,
+                    M)) %>%
+  mutate(
+    FemaleRank = rank(-F, na.last = FALSE),
+    MaleRank = rank(-M, na.last = FALSE),
+    Difference = FemaleRank / MaleRank
+  )
+
+
+MostPopularByYear <-
+  Firearms %>%
+  filter(
+    grepl("Unknown",
+          ManufacturerName) == FALSE &
+      grepl("Small",
+            ManufacturerName) == FALSE &
+      is.na(RECOVERY_DATE) == FALSE
+  ) %>%
+  rename(RecoveryDate = RECOVERY_DATE) %>%
+  mutate(RecoveryDate = ymd(RecoveryDate),
+         Year = year(RecoveryDate)) %>%
+  group_by(Year,
+           ManufacturerName) %>%
+  group_by(Year) %>%
+  mutate(TotalRecords = n()) %>%
+  group_by(Year,
+           ManufacturerName) %>%
+  summarise(GunManufacturerByYear = n() / max(TotalRecords)) %>%
+  ungroup() %>%
+  group_by(Year) %>%
+  mutate(RankByYear = rank(-GunManufacturerByYear)) %>%
+  arrange(Year,
+          RankByYear) %>%
+  filter(RankByYear <= 10) %>%
+  arrange(ManufacturerName,
+          Year)
+
+
+
+PopularTeenGuns <-
+  Firearms %>%
+  rename(Age = PERSON_RECOVERED_FROM_AGE) %>%
+  filter(
+    grepl("Unknown",
+          ManufacturerName) == FALSE &
+      grepl("Small",
+            ManufacturerName) == FALSE
+  ) %>%
+  filter(Age != "NULL" &
+           Age != "U" &
+           is.na(Age) == FALSE) %>%
+  
+  
+  filter(Age > 13) %>%
+  mutate(AgeCategory = ifelse(Age < 20,
+                              "Teen",
+                              "Adult")) %>%
+  group_by(AgeCategory) %>%
+  mutate(TotalRecords = n()) %>%
+  group_by(AgeCategory,
+           ManufacturerName) %>%
+  summarise(GunManufacturerByAgeCategory = n() / max(TotalRecords)) %>%
+  spread(AgeCategory,
+         GunManufacturerByAgeCategory) %>%
+  mutate(Teen = ifelse(is.na(Teen) == TRUE,
+                       0,
+                       Teen),
+         Adult = ifelse(is.na(Adult) == TRUE,
+                        0,
+                        Adult)) %>%
+  mutate(
+    TeenRank = rank(-Teen, na.last = FALSE),
+    AdultRank = rank(-Adult, na.last = FALSE),
+    Difference = TeenRank / AdultRank
+  )
+
+PopularSeniorGuns <-
+  Firearms %>%
+  rename(Age = PERSON_RECOVERED_FROM_AGE) %>%
+  filter(
+    grepl("Unknown",
+          ManufacturerName) == FALSE &
+      grepl("Small",
+            ManufacturerName) == FALSE
+  ) %>%
+  filter(Age != "NULL" &
+           Age != "U" &
+           is.na(Age) == FALSE) %>%
+  
+  
+  
+  mutate(AgeCategory = ifelse(Age  >= 65,
+                              "Senior",
+                              "NotSenior")) %>%
+  group_by(AgeCategory) %>%
+  mutate(TotalRecords = n()) %>%
+  group_by(AgeCategory,
+           ManufacturerName) %>%
+  summarise(GunManufacturerByAgeCategory = n() / max(TotalRecords)) %>%
+  spread(AgeCategory,
+         GunManufacturerByAgeCategory) %>%
+  mutate(
+    Senior = ifelse(is.na(Senior) == TRUE,
+                    0,
+                    Senior),
+    NotSenior = ifelse(is.na(NotSenior) == TRUE,
+                       0,
+                       NotSenior)
+  ) %>%
+  mutate(
+    SeniorRank = rank(-Senior, na.last = FALSE),
+    NotSeniorRank = rank(-NotSenior, na.last = FALSE),
+    Difference = SeniorRank / NotSeniorRank
+  )
+
+# Most popular guns by crime
+guns_for_crime <- Firearms %>%
+  filter(!grepl("Unknown|Small", ManufacturerName)) %>%
+  group_by(UCR_CATEGORY) %>%
+  mutate(TotalRecords = n()) %>%
+  group_by(UCR_CATEGORY,
+           ManufacturerName) %>%
+  summarise(ManufacturerByCrime = n() / max(TotalRecords)) %>%
+  spread(UCR_CATEGORY,
+         ManufacturerByCrime) %>%
+  replace(is.na(.),
+          0) %>%
+  mutate_if(is.numeric,
+            funs(rank(-., na.last = FALSE))) %>%
+  mutate(average_rank = rowMeans(.[,-1])) %>%
+  mutate_if(is.numeric,
+            funs(. / average_rank)) %>%
+  select(-average_rank) %>%
+  gather(key = "Crime",
+         value = "Rank",-ManufacturerName) %>%
+  select(Crime,
+         ManufacturerName,
+         Rank) %>%
+  group_by(Crime) %>%
+  slice(which.min(Rank))
+
+# Most popular guns by zipcode
+guns_for_zips <- Firearms %>%
+  filter(!grepl("Unknown|Small", ManufacturerName)) %>%
+  group_by(RECOVERY_ZIPCODE) %>%
+  mutate(TotalRecords = n()) %>%
+  group_by(RECOVERY_ZIPCODE,
+           ManufacturerName) %>%
+  summarise(ManufacturerByZip = n() / max(TotalRecords)) %>%
+  spread(RECOVERY_ZIPCODE,
+         ManufacturerByZip) %>%
+  replace(is.na(.),
+          0) %>%
+  mutate_if(is.numeric,
+            funs(rank(-., na.last = FALSE))) %>%
+  mutate(average_rank = rowMeans(.[,-1])) %>%
+  mutate_if(is.numeric,
+            funs(. / average_rank)) %>%
+  select(-average_rank) %>%
+  gather(key = "Zip",
+         value = "Rank",-ManufacturerName) %>%
+  select(Zip,
+         ManufacturerName,
+         Rank) %>%
+  group_by(Zip) %>%
+  slice(which.min(Rank))
+
+## Build Map for Zips
+
+# Set API key
+census_api_key("83d5e161383898e4269b02b78edd86d8a2b949f5")
+options(tigris_use_cache = TRUE)
+# Grab zip code data
+zip_geo <- get_acs("zcta",
+                   variables = "B01003_001",
+                   geometry = TRUE)
+
+# Grab Louisville zips
+lou_zips <- zip_geo %>%
+  dplyr::filter(grepl("ZCTA5 402", NAME))
+
+lou_zips <- lou_zips %>%
+  left_join(guns_for_zips,
+            by = c("GEOID" = "Zip")) %>%
+  mutate(
+    url = case_when(
+      ManufacturerName == "Smith & Wesson" ~ "https://s.aolcdn.com/hss/storage/midas/f0d938aece4bf325ff826d6112fabe8/204689874/1_INTRO.jpg",
+      ManufacturerName == "Winchester" ~ "http://www.imfdb.org/images/thumb/d/d1/BTTF3_013.jpg/601px-BTTF3_013.jpg",
+      ManufacturerName == "Beretta" ~ "https://thegrio.com/wp-content/uploads/2013/07/shaq-in-grown-ups-2.jpg",
+      ManufacturerName == "Taurus" ~ "http://www.imfdb.org/images/f/f2/Falling_12.jpg",
+      ManufacturerName == "High Standard" ~ "http://www.drunkmall.com/wp-content/uploads/2015/09/Super-Masculine-Gary-Busey-with-a-Gun-poster.jpg",
+      ManufacturerName == "Glock" ~ "http://www.imfdb.org/images/thumb/9/96/JatBTRS_1.jpg/500px-JatBTRS_1.jpg",
+      ManufacturerName == "Davis Industries" ~ "http://www.imfdb.org/images/thumb/b/b4/CSI-9-Dav-1.jpg/600px-CSI-9-Dav-1.jpg",
+      ManufacturerName == "Stevens/j. Stevens Arms Co." ~ "http://www.imfdb.org/images/thumb/1/1a/The_muthers-25.jpg/600px-The_muthers-25.jpg",
+      ManufacturerName == "O. F. Mossberg & Sons" ~ "http://www.armoryblog.com/wp-content/uploads/2011/12/the-walking-dead-mossberg-500-rick-600x337.jpg",
+      ManufacturerName == "Sig Sauer" ~ "http://www.imfdb.org/images/1/1b/Porencima.jpg",
+      ManufacturerName == "Phoenix Arms Co." ~ "http://www.imfdb.org/images/thumb/d/db/The_Dallas_Connection-Pistol-3.jpg/600px-The_Dallas_Connection-Pistol-3.jpg",
+      TRUE ~ "http://www.imfdb.org/wiki/File:NOTLD90rifle2.jpg"
+    )
+  )
+
+pal <-
+  colorQuantile(palette = "viridis",
+                domain = lou_zips$estimate,
+                n = 10)
+
+
+GunAtAddress <-
+  Firearms %>%
+  mutate(Location = paste(Longitude,
+                          Latitude,
+                          sep = "-")) %>%
+  group_by(Location) %>%
+  summarise(NumberOfGuns = n())
+
+
+
+
+
+MonthlyFirearms <- Firearms %>%
+  filter(is.na(RECOVERY_DATE) == FALSE) %>%
+  mutate(intake.month = as_date(as.yearmon(RECOVERY_DATE))) %>%
+  group_by(ManufacturerName, intake.month) %>%
+  summarise(total.qty = n())
+
+seq_date <- function(x) seq(min(x), max(x), by = "day")
+
+MonthlyFirearmsAll <-
+  MonthlyFirearms %>% 
+  split(.$ManufacturerName) %>% 
+  map_df(~ data_frame(ManufacturerName = .$ManufacturerName[1], intake.month = seq_date(.$intake.month))) %>%
+  left_join(MonthlyFirearms,
+            by = c("intake.month",
+                   "ManufacturerName"),
+            all.x = TRUE) %>%
+  mutate(total.qty = ifelse(
+    is.na(total.qty) == TRUE,
+           0,
+           total.qty
+      ))
+
+
+MonthlyFirearmsAll <-
+  MonthlyFirearmsAll %>%
+  group_by(ManufacturerName) %>%
+  mutate(Max = max(total.qty),
+         Mean = mean(total.qty)) %>%
+  filter(
+    grepl("Small",
+          ManufacturerName) == FALSE &
+      grepl("Unknown",
+            ManufacturerName) == FALSE
+  ) %>%
+  mutate(intake.month = mdy(paste(
+    month(intake.month), 1, year(intake.month)
+  ))) %>%
+  group_by(ManufacturerName, intake.month) %>%
+  summarise(total.qty = sum(total.qty)) %>%
+  group_by(ManufacturerName) %>%
+  mutate(Max = max(total.qty),
+         Mean = mean(total.qty),
+         rows = n()) %>%
+  filter(Mean >= 1 & rows > 1) %>%
+  select(-Max,
+         -Mean,
+         -rows)
+  
+MonthlyFirearms_nest <-MonthlyFirearmsAll %>%
+  group_by(ManufacturerName) %>%
+  nest(.key = "data.tbl")
+
+MonthlyFirearms_ts <- MonthlyFirearms_nest %>%
+  mutate(data.ts = map(.x       = data.tbl, 
+                       .f       = tk_ts, 
+                       select   = -intake.month, 
+                       start    = 2011,
+                       freq     = 12))
+
+
+
+MonthlyFirearms_fit <- MonthlyFirearms_ts %>%
+ mutate(fit.ets = map(data.ts, stlf))
+ 
+  MonthlyFirearms_fcast <- MonthlyFirearms_fit %>%
+     mutate(fcast.ets = map(fit.ets, forecast, h = 12))
+# # 
+# # 
+ MonthlyFirearms_fcast_tidy <- MonthlyFirearms_fcast %>%
+      mutate(sweep = map(fcast.ets, sw_sweep, fitted = FALSE, timetk_idx = TRUE)) %>%
+    unnest(sweep)
+ View(MonthlyFirearms_fcast_tidy)
+
+
+
+
+
+
+```
+
+## Location! Location! Location!
+It is clear that gun trends vary by person, but that's also true by region. You wouldn't want to be caught toting a High Standard or Keltec in J-Town, but they're all the rage in Strathmoor these days. To help make sure you are rocking the latest gun trends wherever you go in the city, we've built a handy map to make sure you are always rocking what the locals are carrying. And if you are considering moving, be sure to check out your potential future neighborhood trends!
+
+
+```{r}
+
+lou_zips %>%
+  st_transform(crs = "+init=epsg:4326") %>%
+  leaflet() %>%
+  addProviderTiles(provider = "CartoDB.Positron") %>%
+  addPolygons(
+    popup = ~ paste0(
+      "<b>",
+      str_extract(lou_zips$ManufacturerName, "^([^,]*)"),
+      "</b><br>",
+      gsub("ZCTA5", "Zipcode: ", lou_zips$NAME),
+      "<br>",
+      "<img src='",
+      lou_zips$url,
+      "' width='100%'>"
+    ),
+    stroke = FALSE,
+    smoothFactor = 0,
+    fillOpacity = 0.7,
+    color = ~ pal(estimate)
+  )
+
+
+
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+
+PopularTeenGuns %>%
+  arrange((Difference)) %>%
+  mutate(Rank = seq(1, nrow(PopularTeenGuns))) %>%
+  select(ManufacturerName, 
+         Rank) %>%
+  head(10) %>%
+  kable()
+
+```
+
+And as teens tend to have less disposable income, their taste in guns is going to tend to favor something low cost that gets the job done. Lorcin Engineer is pretty much the Mad Dog 20/20 of the gun world.  
+
+![](img/firearms/lorcin.png)
+
+If you want to keep your finger on the trigger of today's teen gun trends, we would recommend looking for cheap guns with a hilarious name. 
+
+
+## Don't Bring A Keltec to a Taurus Fight
+Accessories matter. Just as sandals to a non-Hawaiian wedding are out, the proper firearm undoubtedly depends on which sort of crime one intends to commit. As could be expected, Smith & Wesson is capable of reasonably accenting crimes as varied as counterfeiting, narcotics, simple assault, and even theft from a vending machine. 
+
+Conversely, if one plans on being involved in an accidental shooting, there really is no other gun manufacturer besides Taurus.
+
+The table below can serve as a handy guide:  
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+
+guns_for_crime %>%
+  filter(grepl("Kid",Crime) == FALSE &
+           grepl("Rape",Crime) == FALSE &
+           grepl("Family",Crime) == FALSE &
+           grepl("Other",Crime) == FALSE) %>%
+  select(Crime, 
+         ManufacturerName) %>%
+
+  kable()
+
+```
+
+## Staying Up to Speed as a Senior Gun Owner
+As opposed to teens, today's senior is looking for something a little bit different in their choice of weaponry. With such famous and storied names such as the .357 Magnum and the .38 Special, Charter Arms Co. is the manufacturer that appeals to today's Louisville senior.
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+
+PopularSeniorGuns %>%
+  arrange((Difference)) %>%
+  mutate(Rank = seq(1, nrow(PopularSeniorGuns))) %>%
+  select(ManufacturerName, 
+         Rank) %>%
+  head(10) %>%
+  kable()
+
+```
+
+## Battle of the Sexes
+
+Style differences don't stop at age, either! Each gender has their own preferences in gun choice when going out on the town. Doing a little searching shows us that this is not an unknown for the company itself - women can go to thewellarmedwoman.com to purchase their very own weapon of choice and indulge in some light reading about.you know what...we're not even sure we can further satire this site.
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+
+ByGender %>% 
+ arrange(
+   (Difference)
+ ) %>% 
+ mutate(Rank = seq(1, nrow(ByGender))) %>% 
+ select(
+   ManufacturerName,
+   Rank
+ ) %>% 
+ head(10)
+
+```
+
+Men tend to prefer some of the more traditional brands of guns - Smith & Wesson, Beretta, Glock, etc. Showing that in terms of fashion, men tend to fall back more on the less risky "khakis and plaid shirts" style of guns. The outlier here seems to be the Astra Unceta Y Cia line, which sports a fancy pearl handle for your more debonair gun-wielder.
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+
+
+ByGender %>% 
+ arrange(
+    desc(Difference)
+ ) %>% 
+ mutate(Rank = seq(1, nrow(ByGender))) %>% 
+ select(
+   ManufacturerName,
+   Rank
+ ) %>% 
+ head(10)
+
+```
+
+## Hottest Guns of 2017 & 2018! 
+And without further ado, the top five hottest Louisville guns of 2017 were:
+
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+
+MostPopularByYear %>%
+  filter(Year == 2017) %>%
+  arrange((RankByYear)) %>%
+  mutate(Rank = round(RankByYear,0)) %>%
+  rename(PercentOfLouisvilleGuns = GunManufacturerByYear) %>%
+  mutate(PercentOfLouisvilleGuns = round(PercentOfLouisvilleGuns,2)) %>%
+  ungroup() %>%
+  select(ManufacturerName, 
+         PercentOfLouisvilleGuns,
+         Rank) %>%
+  head(5) %>%
+  kable()
+
+```
+
+
+These select guns accounted for over 60% of all Louisville 2017 firearm intake. 
+
+As with the previous six years, S&W held onto its top spot as the most popular Louisville firearm by accounting for nearly one in five guns (It's highest historical mark!). Not only does this tops 2016's record-setting performance, but firmly establishes Smith & Wesson as the gun brand most synonymous with Louisville firearm fashion. S&W is a good bet to hold onto its top spot in 2018. 
+
+Taurus topped 15% of Louisville guns, a number that would be the top gun brand in many years, and its first ever 2nd place finish.
+
+High Standard continues to lose ground, slipping to fourth and accounting for the less than 10% of total guns for the first time in Louisville gun data history. HS is the only non-S&W brand to have held the top spot in the Louisville Gun Scene, but that was a long, long time ago (2011).   
+
+A relative newcomer, Cobra had a share of nearly 4% of gun intake, and its third top ten ranking in the last four years. Could this be a brand to keep an eye on in 2018?!
+
+Taking a look back, we can see that brands like Taurus and Sig have gotten hotter over the last five years. Taurus went from the 4th spot to the 2nd spot in just five years, with Sig going from #10 to #8. Falling in popularity are Keltec, Lorcin, and Remington. All three fell out of the top 10 for 2017, despite being 7th, 8th, and 9th (respectively). Where can we expect to see these trends in 2018, you ask?
+
+```{r}
+slope_tibble <- MostPopularByYear %>% 
+ filter(Year == 2012) %>% 
+ ungroup() %>% 
+ select(ManufacturerName, 
+        `2012` = RankByYear) %>% 
+ full_join(
+   MostPopularByYear %>% 
+     filter(Year == 2017) %>% 
+     ungroup() %>% 
+     select(ManufacturerName, 
+            `2017` = RankByYear),
+   by = "ManufacturerName"
+ ) %>% 
+ mutate(
+   `2017` = case_when(
+     ManufacturerName == "Bryco Arms" ~ 6,
+     ManufacturerName == "Cobra" ~ 7,
+     TRUE ~ `2017`
+   )
+ )
+
+labels_2012 <- paste(slope_tibble$ManufacturerName,
+                    slope_tibble$`2012`,
+                    sep="\n")
+
+labels_2017 <- paste(slope_tibble$ManufacturerName,
+                    slope_tibble$`2017`,
+                    sep="\n")
+
+
+slope_graph <- ggplot(slope_tibble) +
+ geom_segment(
+   aes(
+     x = 0,
+     xend = 5,
+     y = `2012`,
+     yend = `2017`,
+     colour = ManufacturerName
+   ),
+   size = 1,
+   alpha = 0.25
+ ) +
+ geom_point_interactive(
+   shape = 21,
+   fill = "#ffffff",
+   stroke = 3,
+   aes(
+     tooltip = paste0(
+       "<br><b> Year: 2012</b>",
+       "<br><b> Rank: </b>",
+       `2012`
+     ),
+     data_id = paste0(
+       "<br><b> Year: 2012</b>",
+       "<br><b> Rank: </b>",
+       `2012`
+     ),
+     x = 0,
+     y = `2012`,
+     colour = ManufacturerName,
+     size = 1
+   )
+ ) +
+ geom_point_interactive(
+   shape = 21,
+   fill = "#ffffff",
+   stroke = 3,
+   aes(
+     tooltip = paste0(
+       "<br><b> Year: 2017</b>",
+       "<br><b> Rank: </b>",
+       `2017`
+     ),
+     data_id = paste0(
+       "<br><b> Year: 2017</b>",
+       "<br><b> Rank: </b>",
+       `2017`
+     ),
+     x = 5,
+     y = `2017`,
+     colour = ManufacturerName,
+     size = 1
+   )
+ ) +
+ geom_text(
+   data = slope_tibble,
+   aes(
+     label = ManufacturerName,
+     x = 0,
+     y = `2012`),
+   hjust = 0,
+   vjust = -1
+ ) +
+ geom_text(
+   data = slope_tibble,
+   aes(
+     label = ManufacturerName,
+     x = 5,
+     y = `2017`),
+   hjust = 1,
+   vjust = -1
+ ) +
+ geom_text(colour = "#F35B5B",
+           aes(
+             label = "2012",
+             x = 0,
+             y = 0)) +
+ geom_text(colour = "#F35B5B",
+           aes(
+             label = "2017",
+             x = 5,
+             y = 0)) +
+ scale_y_reverse() +
+ scale_colour_viridis(discrete = TRUE) +
+ theme(
+   axis.text = element_blank(),
+   panel.grid = element_blank(),
+   legend.position = "none"
+ )
+
+ggiraph(code = print(slope_graph), 
+       width = 1, 
+       height = 6, 
+       hover_css = "cursor:pointer;fill:#F35B5B;stroke:#F35B5B;")
+```
+
+
+
+## QL's GUNS TO WATCH OUT FOR IN 2018! 
+
+```{r}
+MonthlyFirearms_fcast_tidy %>%
+  ggplot(aes(
+    x = index,
+    y = value,
+    color = key,
+    group = ManufacturerName
+  )) +
+  geom_ribbon(
+    aes(ymin = lo.95, ymax = hi.95),
+    fill = "#D5DBFF",
+    color = NA,
+    size = 0
+  ) +
+  geom_ribbon(
+    aes(ymin = lo.80, ymax = hi.80, fill = key),
+    fill = "#596DD5",
+    color = NA,
+    size = 0,
+    alpha = 0.8
+  ) +
+  geom_line() +
+  labs(
+    title = "Estimated Louisville Gun Trends 2018",
+    subtitle = "Croston Model Forecasts",
+    x = "",
+    y = "Units"
+  ) +
+  #scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  scale_color_tq() +
+  scale_fill_tq() +
+  facet_wrap( ~ ManufacturerName, scales = "free_y", ncol = 3) +
+  theme_tq() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+
+## Metric Discussion:
+For the various metrics QL used something of a relative rank. For example, for the most senior gun, for a gun a percentage of total guns was calculated for seniors and non-seniors. Then within the senior and non-senior groups, each percentage was ranked. Finally, a ratio of senior rank to non-senior rank was calculated. A gun with a low ratio was considered more senior than one that was not. The same metrics was used for teens, crime types, & zip codes. The rankings within year strictly represented the rank of the percentage of total. 
+
+## Data Discussion:
+
+Overall this data is fairly messy to work with. So much so, that other than silliness, it is difficult to create something that could stand up to much scrutiny. For instance, over half of the records are either of unknown manufacturer (unknown to anyone, or to the person doing the data entry?) or missing altogether. In addition, many of the records had duplicate entries (ruining many hilarious observations we had made before we realized this).  
+
+In addition, all homicides are missing the manufacturer. We would be curious to know why this specific crime data either isn't tracked or at least isn't released. 
+
+Even within the records that do have manufacturers listed, there is a great deal of variation within the names. The same manufacturer can be described several different ways. In addition, some are technically subsidiaries of larger manufacturers. We took a reasonable pass at cleaning up the category, but we are definitely not experts on the gun manufactuer. Although data can still be input incorrectly, a "policed" selection of manufacturer options to choose from during data entry might go a long way to clean up the data set.  
+
+Lastly, this post (particularly the map section) would have been significantly less entertaining to create without IMFDB (the internet movie firearms database). Not only are firearms identified for most major films, but it is also possible to ask for weapon identication in fairly obscure movies as well. 
+
+![](img/firearms/imfdb.png)
+
+As always, send your questions and comments our way. [@eric_bickel](http://twitter.com/eric_bickel) or  [@michael_weis](http://twitter.com/michael_weis)
