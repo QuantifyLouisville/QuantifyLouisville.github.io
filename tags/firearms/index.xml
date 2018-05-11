@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Firearms on QuantifyLouisville</title>
+    <link>/tags/firearms/</link>
+    <description>Recent content in Firearms on QuantifyLouisville</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 10 May 2018 21:13:14 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/firearms/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Louisville Gun Fashion</title>
+      <link>/post/2018-05-10-firearm-trends/</link>
+      <pubDate>Thu, 10 May 2018 21:13:14 -0500</pubDate>
+      
+      <guid>/post/2018-05-10-firearm-trends/</guid>
+      <description>As could be expected, it is very difficult to get market research on the hottest trends in gun ownership. However, the Louisville Open Data Portal’s Firearm Intake dataset just might give us a peek into which brands and styles are taking over the Louisville gun scene.
+Of course, which brand of gun someone is partial to is likely influenced by their demographics.</description>
+    </item>
+    
+  </channel>
+</rss>
